@@ -1,0 +1,5 @@
+
+VagrantFile
+Gemfile
+config.ru
+Gemfile.lock
