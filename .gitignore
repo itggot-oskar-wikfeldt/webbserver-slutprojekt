@@ -3,3 +3,4 @@ VagrantFile
 Gemfile
 config.ru
 Gemfile.lock
+.vagrant/*
