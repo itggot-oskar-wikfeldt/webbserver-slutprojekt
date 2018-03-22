@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+html lang="en"
+    head
+        meta charset="UTF-8"
+        meta name="viewport" content="width=device-width, initial-scale=1.0"
+        link rel="stylesheet" href="/css/main.css"
+        title forum
+    body
+        header
+            h1 forum
+        main
+            aside
+                -if session[:user_id]
+                    p you are logged in
+                -else
+                    form.login-form action="login" method="POST"
+                        input type="text" name="username" placeholder="username"
+                        input type="password" name="password" placeholder="password"
+                        div
+                            input type="submit" value="log in"
+                            a href="/register" register
+            content
+                == yield
