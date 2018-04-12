@@ -1,4 +1,23 @@
+body {
+    --background: linear-gradient(to right, #AAAAAA, #EEEEEE);
+    padding: 0;
+    margin: 0;
+}
+
 main {
     display: flex;
-    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+#content {
+    background: var(--background);
+    padding: 10px;
+    width: 100%;
+}
+
+#login {
+    width: 350px;
+    min-height: 350px;
+    padding: 10px;
+    background: var(--background);
 }

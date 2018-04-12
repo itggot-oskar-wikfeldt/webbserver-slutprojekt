@@ -9,15 +9,23 @@ html lang="en"
         header
             h1 forum
         main
-            aside
-                -if session[:user_id]
-                    p you are logged in
-                -else
-                    form.login-form action="login" method="POST"
-                        input type="text" name="username" placeholder="username"
-                        input type="password" name="password" placeholder="password"
-                        div
-                            input type="submit" value="log in"
-                            a href="/register" register
-            content
+            #content
                 == yield
+            aside
+                #login
+                    -if session[:user_id]
+                        p you are logged in
+                    -elsif session[:registering]
+                        form.login-form action="/register" method="POST"
+                            input type="text" name="username" placeholder="username"
+                            input type="password" name="password" placeholder="password"
+                            input type="password" name="confirm_password" placeholder="confirm password"
+                            input type="submit" value="register"
+                    -else
+                        form.login-form action="/login" method="POST"
+                            input type="text" name="username" placeholder="username"
+                            input type="password" name="password" placeholder="password"
+                            div
+                                input type="submit" value="log in"
+                                a href="/register" register
+                    p = session[:error]
