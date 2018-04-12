@@ -14,7 +14,8 @@ html lang="en"
             aside
                 #login
                     -if session[:user_id]
-                        p you are logged in
+                        -string = "logged in as #{session[:username]}"
+                        p =string
                     -elsif session[:registering]
                         form.login-form action="/register" method="POST"
                             input type="text" name="username" placeholder="username"

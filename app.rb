@@ -34,6 +34,7 @@ class App < Sinatra::Base
 		password_digest = result.first["password_digest"]
 		if BCrypt::Password.new(password_digest) == password
 			session[:user_id] = user_id
+			session[:username] = db.execute("SELECT name FROM users WHERE id = ?", [session[:user_id]]).first["name"]
 			set_error("")
 			redirect(session[:page])
 		else
