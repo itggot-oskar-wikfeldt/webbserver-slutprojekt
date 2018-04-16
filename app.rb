@@ -17,6 +17,11 @@ class App < Sinatra::Base
 		slim(:index)
 	end
 
+	get '/hello' do
+		session[:page] = "/hello"
+		slim(:hello)
+	end
+
 	post('/login') do
 		db = SQLite3::Database.new('db/db.sqlite')
 		db.results_as_hash = true
@@ -41,6 +46,12 @@ class App < Sinatra::Base
 			set_error("invalid credentials")
 			redirect(session[:page])
 		end
+	end
+	
+	post('/logout') do
+		page = session[:page]
+		session.destroy
+		redirect(page)
 	end
 
 	get('/register') do
