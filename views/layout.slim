@@ -7,7 +7,8 @@ html lang="en"
         title forum
     body
         header
-            h1 forum
+            a href="/"
+                h1 forum
         main
             #content
                 == yield
@@ -18,13 +19,16 @@ html lang="en"
                         form action="/logout" method="POST"
                             input type="submit" value="logout"
                     -elsif session[:registering]
-                        form.login-form action="/register" method="POST"
-                            input type="text" name="username" placeholder="username"
-                            input type="password" name="password" placeholder="password"
-                            input type="password" name="confirm_password" placeholder="confirm password"
+                        form action="/register" method="POST"
+                            p username
+                            input type="text" name="username"
+                            p password
+                            input type="password" name="password"
+                            p confirm password
+                            input type="password" name="confirm_password"
                             input type="submit" value="register"
                     -else
-                        form.login-form action="/login" method="POST"
+                        form action="/login" method="POST"
                             input type="text" name="username" placeholder="username"
                             input type="password" name="password" placeholder="password"
                             div

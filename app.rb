@@ -14,7 +14,15 @@ class App < Sinatra::Base
 
 	get '/' do
 		session[:page] = "/"
-		slim(:index)
+		db = SQLite3::Database.new('db/db.sqlite')
+		db.results_as_hash = true
+		posts = db.execute("SELECT * FROM posts")
+		posts.each do |post|
+			username = db.execute("SELECT name FROM users WHERE id=?", [post["user_id"]]).first["name"]
+			post["username"] = username
+		end
+
+		slim(:index, locals:{posts:posts})
 	end
 
 	get '/hello' do
@@ -86,6 +94,11 @@ class App < Sinatra::Base
 			redirect(session[:page])
 		end
 		
+	end
+
+	get('/post') do
+		session[:page] = "/post"
+		slim(:post)
 	end
 
 end           

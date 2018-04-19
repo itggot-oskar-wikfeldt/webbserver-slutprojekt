@@ -1,1 +1,9 @@
-p index
+form action="/post" method="GET"
+    input type="submit" value="create new post"
+
+- posts.each do |post|
+    .post-in-list
+        .score =post["score"]
+        .info
+            h1 =post["title"]
+            p ="submitted by #{post["username"]}"

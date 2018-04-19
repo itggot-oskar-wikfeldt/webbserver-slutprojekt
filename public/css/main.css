@@ -1,5 +1,6 @@
 body {
     --background: linear-gradient(to right, #AAAAAA, #EEEEEE);
+    --background-inverted: linear-gradient(to left, #AAAAAA, #EEEEEE);
     padding: 0;
     margin: 0;
 }
@@ -7,6 +8,30 @@ body {
 main {
     display: flex;
     justify-content: space-between;
+}
+
+header {
+    margin-left: 10px;
+}
+
+header a {
+    text-decoration: none;
+    color: black;
+}
+
+header h1 {
+    font-size: 50px;
+    margin: 0;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+}
+
+form p {
+    margin: 0;
 }
 
 #content {
@@ -20,4 +45,23 @@ main {
     min-height: 350px;
     padding: 10px;
     background: var(--background);
+}
+
+.post-in-list {
+    background: var(--background-inverted);    
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.post-in-list .score {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+}
+
+.post-in-list .info {
+    display: flex;
+    flex-direction: column;
 }
