@@ -1,3 +1,8 @@
+#require 'slim'
+#require 'sinatra'
+#require 'bcrypt'
+#require 'sqlite3'
+
 class App < Sinatra::Base
 
 	enable :sessions
@@ -24,6 +29,8 @@ class App < Sinatra::Base
 
 		slim(:index, locals:{posts:posts})
 	end
+
+	
 
 	get '/hello' do
 		session[:page] = "/hello"
@@ -97,8 +104,34 @@ class App < Sinatra::Base
 	end
 
 	get('/post') do
-		session[:page] = "/post"
 		slim(:post)
+	end
+
+	post('/post') do
+		db = SQLite3::Database.new('db/db.sqlite')
+		title = params[:title]
+		image = params[:image]
+		user_id = session[:user_id]
+		db.execute("INSERT INTO posts (title, score, user_id) VALUES (?, ?, ?)", [title, 0, user_id])
+		redirect(session[:page])
+	end
+
+	get('/posts/:post_id') do
+		db = SQLite3::Database.new('db/db.sqlite')
+		db.results_as_hash = true
+		post_id = params[:post_id]
+		session[:page] = "/posts/#{post_id}"
+
+		post = db.execute("SELECT * FROM posts WHERE id = ?", [post_id]).first
+		unless post
+			slim(:fourofour)
+		else
+			username = db.execute("SELECT name FROM users WHERE id=?", [post["user_id"]]).first["name"]
+			post["username"] = username
+
+			slim(:posts, locals:{post:post})
+		end
+
 	end
 
 end           

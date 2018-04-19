@@ -1,9 +1,14 @@
-form action="/post" method="GET"
-    input type="submit" value="create new post"
+-if session[:user_id]
+	form action="/post" method="GET"
+		div
+	    	input type="submit" value="create new post"
+-else
+	p log in to create posts	    	
 
 - posts.each do |post|
     .post-in-list
         .score =post["score"]
         .info
-            h1 =post["title"]
+            a href="/posts/#{post["id"]}"
+            	=post["title"]
             p ="submitted by #{post["username"]}"

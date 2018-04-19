@@ -14,7 +14,7 @@ header {
     margin-left: 10px;
 }
 
-header a {
+a {
     text-decoration: none;
     color: black;
 }
@@ -52,6 +52,7 @@ form p {
     display: flex;
     flex-direction: row;
     margin-top: 10px;
+    padding: 10px;
 }
 
 .post-in-list .score {
@@ -64,4 +65,14 @@ form p {
 .post-in-list .info {
     display: flex;
     flex-direction: column;
+}
+
+.post-in-list a {
+    font-weight: bold;
+    font-size: 20px;
+    margin: 0;
+}
+
+.post-in-list p {
+    margin: 0;
 }
