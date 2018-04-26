@@ -3,7 +3,10 @@
 #require 'bcrypt'
 #require 'sqlite3'
 
+require_relative 'modules.rb'
+
 class App < Sinatra::Base
+	include Users
 
 	enable :sessions
 
@@ -30,37 +33,23 @@ class App < Sinatra::Base
 		slim(:index, locals:{posts:posts})
 	end
 
-	
-
 	get '/hello' do
 		session[:page] = "/hello"
 		slim(:hello)
 	end
 
 	post('/login') do
-		db = SQLite3::Database.new('db/db.sqlite')
-		db.results_as_hash = true
 		username = params["username"]
 		password = params["password"]
-		
-		result = db.execute("SELECT id, password_digest FROM users WHERE name=?", [username])
-
-		if result.empty?
+		result = Users::login(username, password)
+		if result.nil?
 			set_error("invalid credentials")
 			redirect(session[:page])			
 		end
-
-		user_id = result.first["id"]
-		password_digest = result.first["password_digest"]
-		if BCrypt::Password.new(password_digest) == password
-			session[:user_id] = user_id
-			session[:username] = db.execute("SELECT name FROM users WHERE id = ?", [session[:user_id]]).first["name"]
-			set_error("")
-			redirect(session[:page])
-		else
-			set_error("invalid credentials")
-			redirect(session[:page])
-		end
+		session[:user_id] = result[:user_id]
+		session[:username] = result[:username]
+		set_error("")
+		redirect(session[:page])
 	end
 	
 	post('/logout') do
@@ -75,28 +64,21 @@ class App < Sinatra::Base
 	end
 	
 	post('/register') do
-		db = SQLite3::Database.new('db/db.sqlite')
-		db.results_as_hash = true
 		
 		username = params["username"]
 		password = params["password"]
 		password_confirmation = params["confirm_password"]
 		
-		result = db.execute("SELECT id FROM users WHERE name=?", [username])
+		result = Users.register(username, password, password_confirmation)
 		
-		if result.empty?
-			if password == password_confirmation
-				password_digest = BCrypt::Password.create(password)
-				
-				db.execute("INSERT INTO users(name, password_digest) VALUES (?,?)", [username, password_digest])
-				set_error("registered! please log in")
-				session[:registering] = nil
-				redirect(session[:page])
-			else
-				set_error("passwords don't match")
-				redirect(session[:page])
-			end
-		else
+		if result == 0
+			set_error("registered! please log in")
+			session[:registering] = nil
+			redirect(session[:page])
+		elsif result == 1000
+			set_error("passwords don't match")
+			redirect(session[:page])
+		elsif result == 1001
 			set_error("username already exists")
 			redirect(session[:page])
 		end

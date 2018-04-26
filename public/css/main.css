@@ -67,12 +67,12 @@ form p {
     flex-direction: column;
 }
 
-.post-in-list a {
+.post-in-list .info a {
     font-weight: bold;
     font-size: 20px;
     margin: 0;
 }
 
-.post-in-list p {
+.post-in-list .info p {
     margin: 0;
 }
