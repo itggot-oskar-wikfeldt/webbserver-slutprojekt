@@ -1,11 +1,11 @@
-require 'slim'
-require 'sinatra'
-require 'bcrypt'
-require 'sqlite3'
+#require 'slim'
+#require 'sinatra'
+#require 'bcrypt'
+#require 'sqlite3'
 
 require_relative 'modules.rb'
 
-#class App < Sinatra::Base
+class App < Sinatra::Base
 	include Users
 
 	enable :sessions
@@ -115,7 +115,7 @@ require_relative 'modules.rb'
 			username = db.select(["name"], "users", "id", post["user_id"]).first["name"]
 			post["username"] = username
 
-			comments = db.select(["*"], "comments", "post_id", db.select(["id"], "posts", "id", post_id).first["id"])
+			comments = db.select(["*"], "comments", "post_id", post_id)
 			comments.each do |comment|
 				comment["username"] = db.select(["name"], "users", "id", comment["user_id"]).first["name"]
 			end
@@ -147,4 +147,4 @@ require_relative 'modules.rb'
 
 	end
 
-#end           
+end           
