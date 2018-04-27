@@ -1,19 +1,24 @@
 body {
-    --background: linear-gradient(to right, #AAAAAA, #EEEEEE);
-    --background-inverted: linear-gradient(to left, #AAAAAA, #EEEEEE);
+    --background: linear-gradient(to right, #38d9ff, #cbf5ff);
+    --background-inverted: linear-gradient(to left, #38d9ff, #cbf5ff);
+    --content-width: 800px;
     padding: 0;
     margin: 0;
+    margin-left: calc(50vw - var(--content-width) / 2);
+    margin-right: auto;
 }
 
 main {
     display: flex;
-    justify-content: space-between;
     min-height: calc(100vh - 64px);
 }
 
 header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
     margin-left: 10px;
-    height: 64px;
+    height: 90px;
 }
 
 a {
@@ -28,6 +33,7 @@ a:hover {
 header a, header a:hover {
     text-decoration: none;
     color: black;
+
 }
 
 p {
@@ -35,7 +41,9 @@ p {
 }
 
 header h1 {
-    font-size: 50px;
+    --font-size: 80px;
+    font-size: var(--font-size);
+    line-height: calc(var(--font-size) * 0.68);
     margin: 0;
 }
 
@@ -52,14 +60,12 @@ form p {
 #content {
     background: var(--background);
     padding: 10px;
-    width: 100%;
+    width: var(--content-width);
 }
 
 #login {
-    width: 350px;
-    height: 100%;
+    width: 280px;
     padding: 10px;
-    box-sizing: border-box;
     background: var(--background);
 }
 
