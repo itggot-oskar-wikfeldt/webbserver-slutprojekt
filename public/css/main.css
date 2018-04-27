@@ -8,15 +8,30 @@ body {
 main {
     display: flex;
     justify-content: space-between;
+    min-height: calc(100vh - 64px);
 }
 
 header {
     margin-left: 10px;
+    height: 64px;
 }
 
 a {
     text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+header a, header a:hover {
+    text-decoration: none;
     color: black;
+}
+
+p {
+    margin: 0;
 }
 
 header h1 {
@@ -42,8 +57,9 @@ form p {
 
 #login {
     width: 350px;
-    min-height: 350px;
+    height: 100%;
     padding: 10px;
+    box-sizing: border-box;
     background: var(--background);
 }
 
@@ -69,10 +85,49 @@ form p {
 
 .post-in-list .info a {
     font-weight: bold;
-    font-size: 20px;
+    font-size: 32px;
     margin: 0;
 }
 
-.post-in-list .info p {
-    margin: 0;
+.submitted-by {
+    display: flex;
+    flex-direction: row;
+}
+
+.submitted-by a, .submitted-by p {
+    font-size: initial !important;
+    font-weight: normal;
+    margin-right: 3px;
+}
+
+.comment {
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--background-inverted)
+}
+
+.comment p {
+    font-size: 18px;
+}
+
+#comments {
+    margin-top: 10px;
+}
+
+textarea {
+    width: 500px;
+    height: 100px;
+}
+
+.post-img {
+    margin-left: auto;
+}
+
+.post-img img {
+    max-height: 128px; 
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
 }

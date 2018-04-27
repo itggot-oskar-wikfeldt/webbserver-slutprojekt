@@ -3,12 +3,18 @@
 		div
 	    	input type="submit" value="create new post"
 -else
-	p log in to create posts	    	
+	p log in to create posts
 
-- posts.each do |post|
+- posts.reverse_each do |post|
     .post-in-list
-        .score =post["score"]
+        / .score =post["score"]
         .info
             a href="/posts/#{post["id"]}"
             	=post["title"]
-            p ="submitted by #{post["username"]}"
+            .submitted-by
+	            p submitted by
+		        a href="/users/#{post["user_id"]}"
+						=post["username"]
+		-if post["has_image"]
+			a.post-img href="#{post["image_url"]}"
+				img src="#{post["image_url"]}"

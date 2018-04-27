@@ -1,11 +1,11 @@
-#require 'slim'
-#require 'sinatra'
-#require 'bcrypt'
-#require 'sqlite3'
+require 'slim'
+require 'sinatra'
+require 'bcrypt'
+require 'sqlite3'
 
 require_relative 'modules.rb'
 
-class App < Sinatra::Base
+#class App < Sinatra::Base
 	include Users
 
 	enable :sessions
@@ -28,7 +28,11 @@ class App < Sinatra::Base
 		posts.each do |post|
 			username = db.execute("SELECT name FROM users WHERE id=?", [post["user_id"]]).first["name"]
 			post["username"] = username
+			has_image = !post["image_url"].nil?
+			post["has_image"] = has_image
 		end
+
+		
 
 		slim(:index, locals:{posts:posts})
 	end
@@ -90,30 +94,57 @@ class App < Sinatra::Base
 	end
 
 	post('/post') do
-		db = SQLite3::Database.new('db/db.sqlite')
+		db = SQL.new
 		title = params[:title]
-		image = params[:image]
+		image_url = params[:image]
 		user_id = session[:user_id]
-		db.execute("INSERT INTO posts (title, score, user_id) VALUES (?, ?, ?)", [title, 0, user_id])
+		db.insert_into("posts", ["title", "score", "user_id", "image_url"], [title, 0, user_id, image_url])
 		redirect(session[:page])
 	end
 
 	get('/posts/:post_id') do
-		db = SQLite3::Database.new('db/db.sqlite')
-		db.results_as_hash = true
+		db = SQL.new
 		post_id = params[:post_id]
 		session[:page] = "/posts/#{post_id}"
+		session[:post_id] = post_id
 
-		post = db.execute("SELECT * FROM posts WHERE id = ?", [post_id]).first
+		post = db.select(["*"], "posts", "id", post_id).first
 		unless post
 			slim(:fourofour)
 		else
-			username = db.execute("SELECT name FROM users WHERE id=?", [post["user_id"]]).first["name"]
+			username = db.select(["name"], "users", "id", post["user_id"]).first["name"]
 			post["username"] = username
 
-			slim(:posts, locals:{post:post})
+			comments = db.select(["*"], "comments", "post_id", db.select(["id"], "posts", "id", post_id).first["id"])
+			comments.each do |comment|
+				comment["username"] = db.select(["name"], "users", "id", comment["user_id"]).first["name"]
+			end
+
+			has_image = !post["image_url"].nil?
+
+			slim(:posts, locals:{post:post, comments:comments, has_image:has_image})
 		end
+	end
+
+	get('/users/:user_id') do
+		db = SQL.new
+		user_id = params[:user_id]
+		user = db.select(["name"], "users", "id", user_id).first
+		slim(:users, locals:{user:user})
+	end
+
+	post('/comment') do
+		db = SQL.new
+		text = params[:text]
+		text = text[0...2000]
+		user_id = session[:user_id]
+		post_id = session[:post_id]
+
+		p [text, user_id, post_id, 0].join(", ")
+
+		db.insert_into("comments", ["text", "user_id", "post_id", "score"], [text, user_id, post_id, 0])
+		redirect(session[:page])
 
 	end
 
-end           
+#end           

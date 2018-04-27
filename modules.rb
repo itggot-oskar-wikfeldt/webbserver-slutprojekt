@@ -11,9 +11,9 @@ class SQL
     end
 
     def insert_into(insert_table, columns, values)
-        columns_result = columns.join(", ")
-        result = @db.execute("INSERT INTO #{insert_table} (#{columns_result}) VALUES (?,?)", values)
-        return result
+        querys = "?, " * values.size
+        querys = querys[0...-2]
+        @db.execute("INSERT INTO #{insert_table} (#{columns.join(", ")}) VALUES (#{querys})", values)
     end
 end
 
@@ -21,14 +21,14 @@ module Users
     def self.login(username, password)
         db = SQL.new
 
-        result = db.select(["id", "password_digest"], "users", "name", username)
+        result = db.select(["id", "password_digest"], "users", "name", username).first
 
-		if result.empty?
+		if result.nil?
 			return nil		
 		end
 
-		user_id = result.first["id"]
-		password_digest = result.first["password_digest"]
+		user_id = result["id"]
+		password_digest = result["password_digest"]
 		if BCrypt::Password.new(password_digest) == password
 			return {user_id:user_id, username:username}
 		else
@@ -39,7 +39,7 @@ module Users
     def self.register(username, password, password_confirmation)
         db = SQL.new
         
-        result = db.select(["id"], "users", "name", username)
+        result = db.select(["*"], "users", "name", username)
 		
 		if result.empty?
 			if password == password_confirmation

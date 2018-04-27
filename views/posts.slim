@@ -1,6 +1,28 @@
 .post-in-list
-    .score =post["score"]
+    / .score =post["score"]
     .info
         a href="/posts/#{post["id"]}"
         	=post["title"]
-        p ="submitted by #{post["username"]}"
+        .submitted-by
+	        p submitted by 
+	        a href="/users/#{post["user_id"]}"
+					=post["username"]
+	-if has_image
+		a.post-img href="#{post["image_url"]}"
+			img src="#{post["image_url"]}"
+
+#comments
+	-if session[:user_id]
+		p character limit: 2000
+		textarea form="comment" name="text"
+		form.comment-form action="/comment" id="comment" method="POST"
+			div
+		    	input type="submit" value="post comment"
+	-else
+		p log in to comment
+
+	-comments.each do |comment|
+		.comment
+			a href="/users/#{comment["user_id"]}"
+				=comment["username"]
+			p =comment["text"]
