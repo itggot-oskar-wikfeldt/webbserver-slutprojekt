@@ -44,11 +44,6 @@ class App < Sinatra::Base
 
 	end
 
-	get '/hello' do
-		session[:page] = "/hello"
-		slim(:hello)
-	end
-
 	post('/login') do
 		username = params["username"]
 		password = params["password"]
@@ -161,10 +156,7 @@ class App < Sinatra::Base
 		
 		friends = Users::get_friends(user_id)
 		friends.each do |friend|
-			p friend[:id]
-			p "friendid:#{friend_id}"
 			if friend[:id].to_i == friend_id.to_i
-				p "hell"
 				redirect(session[:page])
 				return
 			end
@@ -179,9 +171,6 @@ class App < Sinatra::Base
 		text = text[0...2000]
 		user_id = session[:user_id]
 		post_id = session[:post_id]
-
-		p [text, user_id, post_id, 0].join(", ")
-
 		db.insert_into("comments", ["text", "user_id", "post_id", "score"], [text, user_id, post_id, 0])
 		redirect(session[:page])
 
