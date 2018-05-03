@@ -1,0 +1,7 @@
+-unless friends
+    p not logged in
+-else
+    #friends
+        -friends.each do |friend|
+            a href="/users/#{friend[:id]}"
+                =friend[:name]

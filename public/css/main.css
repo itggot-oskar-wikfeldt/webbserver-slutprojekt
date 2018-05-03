@@ -137,3 +137,8 @@ textarea {
     display: flex;
     flex-direction: column;
 }
+
+#friends {
+    display: flex;
+    flex-direction: column;
+}

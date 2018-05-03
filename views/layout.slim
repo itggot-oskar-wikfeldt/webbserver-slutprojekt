@@ -19,6 +19,7 @@ html lang="en"
                         form action="/logout" method="POST"
                             div
                                 input type="submit" value="log out"
+                        a href="/friends" friends
                     -elsif session[:registering]
                         form action="/register" method="POST"
                             p username

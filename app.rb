@@ -32,9 +32,26 @@ class App < Sinatra::Base
 			post["has_image"] = has_image
 		end
 
-		
-
 		slim(:index, locals:{posts:posts})
+	end
+
+	get '/friends' do
+		session[:page] = "/friends"
+		db = SQLite3::Database.new('db/db.sqlite')
+		db.results_as_hash = true
+		friends = false
+		if session[:user_id]
+			friends_with = db.execute("SELECT * FROM friends_with_benefits WHERE user_1 = ? OR user_2 = ?", [session[:user_id], session[:user_id]])
+			friends = []
+			friends_with.each do |pair|
+				pair.delete_if {|k, v| v == session[:user_id] }
+				friend_id = pair.first[1]
+				friend_name = db.execute("SELECT name FROM users WHERE id=?", [friend_id]).first["name"]
+				friends << {id:friend_id, name:friend_name}
+			end			
+		end
+		slim(:friends, locals:{friends:friends})
+
 	end
 
 	get '/hello' do
@@ -128,9 +145,15 @@ class App < Sinatra::Base
 
 	get('/users/:user_id') do
 		db = SQL.new
-		user_id = params[:user_id]
-		user = db.select(["name"], "users", "id", user_id).first
+		other_user_id = params[:user_id]
+		session[:other_user_id] = other_user_id
+		user = db.select(["name"], "users", "id", other_user_id).first
 		slim(:users, locals:{user:user})
+	end
+
+	post('/add_friend') do
+		db = SQL.new
+		
 	end
 
 	post('/comment') do
