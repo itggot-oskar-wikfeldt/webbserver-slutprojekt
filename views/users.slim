@@ -1,5 +1,10 @@
 h1
 	=user["name"]
-form action="/add_friend" method="POST"
-	div
-		input type="submit" value="add as friend"
+-if !session[:user_id]
+	p log in to add friends
+-elsif !friends_with
+	form action="/add_friend" method="POST"
+		div
+			input type="submit" value="add as friend"
+-else
+	p you are friends!

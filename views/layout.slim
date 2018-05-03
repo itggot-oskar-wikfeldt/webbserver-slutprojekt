@@ -28,7 +28,11 @@ html lang="en"
                             input type="password" name="password"
                             p confirm password
                             input type="password" name="confirm_password"
-                            input type="submit" value="register"
+                            div
+                                input type="submit" value="register"
+                        form action="/no_register" method="POST"
+                            div
+                                input type="submit" value="back"
                     -else
                         form action="/login" method="POST"
                             input type="text" name="username" placeholder="username"

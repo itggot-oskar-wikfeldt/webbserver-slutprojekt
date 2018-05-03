@@ -22,11 +22,10 @@ class App < Sinatra::Base
 
 	get '/' do
 		session[:page] = "/"
-		db = SQLite3::Database.new('db/db.sqlite')
-		db.results_as_hash = true
+		db = SQL.new
 		posts = db.execute("SELECT * FROM posts")
 		posts.each do |post|
-			username = db.execute("SELECT name FROM users WHERE id=?", [post["user_id"]]).first["name"]
+			username = db.execute_with_vars("SELECT name FROM users WHERE id=?", [post["user_id"]]).first["name"]
 			post["username"] = username
 			has_image = !post["image_url"].nil?
 			post["has_image"] = has_image
@@ -37,18 +36,9 @@ class App < Sinatra::Base
 
 	get '/friends' do
 		session[:page] = "/friends"
-		db = SQLite3::Database.new('db/db.sqlite')
-		db.results_as_hash = true
 		friends = false
 		if session[:user_id]
-			friends_with = db.execute("SELECT * FROM friends_with_benefits WHERE user_1 = ? OR user_2 = ?", [session[:user_id], session[:user_id]])
-			friends = []
-			friends_with.each do |pair|
-				pair.delete_if {|k, v| v == session[:user_id] }
-				friend_id = pair.first[1]
-				friend_name = db.execute("SELECT name FROM users WHERE id=?", [friend_id]).first["name"]
-				friends << {id:friend_id, name:friend_name}
-			end			
+			friends = Users::get_friends(session[:user_id])		
 		end
 		slim(:friends, locals:{friends:friends})
 
@@ -85,7 +75,6 @@ class App < Sinatra::Base
 	end
 	
 	post('/register') do
-		
 		username = params["username"]
 		password = params["password"]
 		password_confirmation = params["confirm_password"]
@@ -103,7 +92,11 @@ class App < Sinatra::Base
 			set_error("username already exists")
 			redirect(session[:page])
 		end
-		
+	end
+
+	post('/no_register') do
+		session[:registering] = false
+		redirect(session[:page])
 	end
 
 	get('/post') do
@@ -146,14 +139,38 @@ class App < Sinatra::Base
 	get('/users/:user_id') do
 		db = SQL.new
 		other_user_id = params[:user_id]
+		session[:page] = "/users/#{other_user_id}"
 		session[:other_user_id] = other_user_id
-		user = db.select(["name"], "users", "id", other_user_id).first
-		slim(:users, locals:{user:user})
+		username = db.select(["name"], "users", "id", other_user_id).first
+		friends_with = false
+		if session[:user_id]
+			friends = Users::get_friends(session[:user_id])
+			friends.each do |friend|
+				if friend[:id].to_i == other_user_id.to_i
+					friends_with = true
+				end
+			end
+		end
+		slim(:users, locals:{user:username, friends_with:friends_with})
 	end
 
 	post('/add_friend') do
 		db = SQL.new
+		user_id = session[:user_id]
+		friend_id = session[:other_user_id]
 		
+		friends = Users::get_friends(user_id)
+		friends.each do |friend|
+			p friend[:id]
+			p "friendid:#{friend_id}"
+			if friend[:id].to_i == friend_id.to_i
+				p "hell"
+				redirect(session[:page])
+				return
+			end
+		end
+		db.insert_into("friends_with_benefits", ["user_1", "user_2"], [user_id, friend_id])
+		redirect(session[:page])
 	end
 
 	post('/comment') do
